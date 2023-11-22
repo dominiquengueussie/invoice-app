@@ -8,7 +8,7 @@
                     <h2 class="invoice__title">Invoices</h2>
                 </div>
                 <div>
-                    <a class="btn btn-secondary">
+                    <a class="btn btn-secondary" @click="newInvoice()">
                         New Invoice
                     </a>
                 </div>
@@ -43,7 +43,8 @@
                     </div>
                     <div class="relative">
                         <i class="table--search--input--icon fas fa-search "></i>
-                        <input class="table--search--input" type="text" placeholder="Search invoice">
+                        <input class="table--search--input" type="text" placeholder="Search invoice"
+                        v-model="searchInvoices" @keyup="search()">
                     </div>
                 </div>
 
@@ -60,14 +61,15 @@
                 <div class="table--items" v-for="item in invoices" :key="item.id" v-if="invoices.length > 0">
                     <a href="#" class="table--items--transactionId">#{{ item.id }}</a>
                     <p>{{ item.date }}</p>
-                    <p>#{{item.number}}</p>
-                    <p>{{ item.customer_id }}</p>
+                    <p>#{{ item.number }}</p>
+                    <p v-if="item.customer">{{ item.customer.firstname }}</p>
+                    <p v-else></p>
                     <p>{{ item.date_echeance }}</p>
                     <p>{{ item.total }} fcfa</p>
                 </div>
 
                 <div style="text-align: center;" v-else>
-                   aucune commande trouvé !
+                    aucune commande trouvé !
                 </div>
             </div>
         </div>
@@ -77,8 +79,11 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter()
 let invoices = ref([]);
+let searchInvoices = ref([]);
 
 onMounted(async () => {
     getInvoices()
@@ -89,5 +94,15 @@ const getInvoices = async () => {
     //console.log('response', response);
     invoices.value = response.data.invoices
 }
+
+const search = async () => {
+    let response = await axios.get('/api/search_invoice?s=' + searchInvoices.value);
+    /*console.log(response.data.invoices)*/
+    invoices.value = response.data.invoices
+}
+const newInvoice = async () => {
+    let form = await axios.get('/api/create_invoice'); 
+    console.log('response', form.data);  
+    router.push('invoice/new')}
 
 </script>
