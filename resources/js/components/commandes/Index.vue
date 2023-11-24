@@ -1,3 +1,37 @@
+
+<script setup>
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
+let invoices = ref([]);
+let searchInvoices = ref([]);
+
+onMounted(async () => {
+    getInvoices()
+})
+
+const getInvoices = async () => {
+    let response = await axios.get('api/get_all_invoice')
+    //console.log('response', response);
+    invoices.value = response.data.invoices
+}
+
+const search = async () => {
+    let response = await axios.get('/api/search_invoice?s=' + searchInvoices.value);
+    /*console.log(response.data.invoices)*/
+    invoices.value = response.data.invoices
+}
+
+const newInvoice = async () => {
+    //let form = await axios.get('/api/create_invoice');
+    //console.log(form);
+    router.push('/invoice/new')
+}
+
+</script>
+
+
 <template>
     <!--==================== INVOICE LIST ====================-->
     <div class="container">
@@ -44,7 +78,7 @@
                     <div class="relative">
                         <i class="table--search--input--icon fas fa-search "></i>
                         <input class="table--search--input" type="text" placeholder="Search invoice"
-                        v-model="searchInvoices" @keyup="search()">
+                            v-model="searchInvoices" @keyup="search()" @focusout="getInvoices()">
                     </div>
                 </div>
 
@@ -77,32 +111,3 @@
 </template>
 
 
-<script setup>
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-const router = useRouter()
-let invoices = ref([]);
-let searchInvoices = ref([]);
-
-onMounted(async () => {
-    getInvoices()
-})
-
-const getInvoices = async () => {
-    let response = await axios.get('api/get_all_invoice')
-    //console.log('response', response);
-    invoices.value = response.data.invoices
-}
-
-const search = async () => {
-    let response = await axios.get('/api/search_invoice?s=' + searchInvoices.value);
-    /*console.log(response.data.invoices)*/
-    invoices.value = response.data.invoices
-}
-const newInvoice = async () => {
-    let form = await axios.get('/api/create_invoice'); 
-    console.log('response', form.data);  
-    router.push('invoice/new')}
-
-</script>

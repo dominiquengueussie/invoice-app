@@ -39,19 +39,20 @@ class InvoiceController extends Controller
         $random = Counter::where('key', 'invoice')->first();
 
         $invoice = Invoice::orderBy('id', 'DESC')->first();
+
         if ($invoice) {
             $invoice = $invoice->id + 1;
             $counters = $counter->value + $invoice;
-        } else {
+        }else {
             $counters = $counter->value;
         }
 
         $formData =
             [
-                'number' => $counter->prefix->counters,
+                'number' => $counter->prefix.$counters,
                 'customer_id' => null,
                 'customer' => null,
-                'date' => date('Y-m-d'),
+                'date' => date('d-m-Y'),
                 'date_echeance' => null,
                 'reference' => null,
                 'discount' => 0,
@@ -63,8 +64,6 @@ class InvoiceController extends Controller
                     'quantity' => 1,
                 ]
             ];
-        return response()->json(
-            ['formData' => $formData]
-        );
+        return response()->json($formData);
     }
 }
