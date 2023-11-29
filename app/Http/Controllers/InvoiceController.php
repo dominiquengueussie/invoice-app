@@ -52,7 +52,7 @@ class InvoiceController extends Controller
                 'number' => $counter->prefix.$counters,
                 'customer_id' => null,
                 'customer' => null,
-                'date' => date('d-m-Y'),
+                'date' => date('Y-m-d'),
                 'date_echeance' => null,
                 'reference' => null,
                 'discount' => 0,
