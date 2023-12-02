@@ -14,7 +14,6 @@ onMounted(async () => {
     indexForm();
     all_customers();
     getProducts();
-
 });
 
 const indexForm = async () => {
@@ -38,12 +37,12 @@ const addCart = (item) => {
         quantity: item.quantity,
     };
     listCart.value.push(itemCart);
-    closeModal()
+    closeModal();
 };
 
 const removeItem = (i) => {
-    listCart.value.splice(i, 1)
-}
+    listCart.value.splice(i, 1);
+};
 
 const openModal = () => {
     showModal.value = !showModal.value;
@@ -56,6 +55,14 @@ const getProducts = async () => {
     let response = await axios.get("/api/products");
     //console.log('response', response)
     listProducts.value = response.data.products;
+};
+
+// Utiliser reduce pour calculer le sous-total de manière plus concise
+const subTotal = () => {
+    const total = listCart.value.reduce((accumulator, data) => {
+        return accumulator + (data.quantity * data.unit_price);
+    }, 0);
+    return total;
 };
 </script>
 
@@ -182,12 +189,13 @@ const getProducts = async () => {
                             cols="50"
                             rows="7"
                             class="textarea"
+                            v-model="form.terms_and_conditions"
                         ></textarea>
                     </div>
                     <div>
                         <div class="table__footer--subtotal">
                             <p>Sub Total</p>
-                            <span>$ 1000</span>
+                            <span>{{ subTotal() + " " }}fcfa</span>
                         </div>
                         <div class="table__footer--discount">
                             <p>Discount</p>
@@ -195,7 +203,7 @@ const getProducts = async () => {
                         </div>
                         <div class="table__footer--total">
                             <p>Grand Total</p>
-                            <span>$ 1200</span>
+                            <span>{{ subTotal() + " " }}fcfa</span>
                         </div>
                     </div>
                 </div>
