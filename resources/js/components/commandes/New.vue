@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 let form = ref([]);
 let allCustomers = ref([]);
 let customer_id = ref([]);
@@ -19,7 +21,7 @@ onMounted(async () => {
 const indexForm = async () => {
     let response = await axios.get("/api/create_invoice");
     form.value = response.data;
-    //console.log('form', form);
+    console.log("form", form);
 };
 
 const all_customers = async () => {
@@ -57,12 +59,40 @@ const getProducts = async () => {
     listProducts.value = response.data.products;
 };
 
-// Utiliser reduce pour calculer le sous-total de manière plus concise
+// Utiliser reduce pour calculer le sous-total
 const subTotal = () => {
     const total = listCart.value.reduce((accumulator, data) => {
-        return accumulator + (data.quantity * data.unit_price);
+        return accumulator + data.quantity * data.unit_price;
     }, 0);
     return total;
+};
+
+const Total = () => {
+    return subTotal() - form.value.remise;
+};
+
+const saveItems = () => {
+    let total = 0;
+    let subtotal = 0;
+    subtotal = subTotal();
+    total = Total();
+
+    const formdata = new FormData();
+
+    formdata.append("invoice_item", JSON.stringify(listCart.value));
+    formdata.append("customer_id", customer_id.value);
+    formdata.append("date", form.value.date);
+    formdata.append("date_echeance", form.value.date_echeance);
+    formdata.append("number", form.value.number);
+    formdata.append("reference", form.value.reference);
+    formdata.append("remise", form.value.remise);
+    formdata.append("subtotal", subtotal);
+    formdata.append("total",total);
+    formdata.append("terms_and_conditions", form.value.terms_and_conditions);
+    console.log(formdata)
+    axios.post("/api/add_invoice", formdata);
+    listCart.value = [];
+    router.push("/");
 };
 </script>
 
@@ -80,12 +110,12 @@ const subTotal = () => {
                 <div class="card__content--header">
                     <div>
                         <p class="my-1">Customer</p>
-                        <select id="" class="input">
+                        <select id="" class="input" v-model="customer_id">
                             <option selected disabled>Choisir un client</option>
                             <option
-                                :value="customer.id"
-                                v-for="customer in allCustomers"
-                                :key="customer.id"
+                            v-for="customer in allCustomers"
+                            :key="customer.id"
+                            :value="customer.id"
                             >
                                 {{ customer.firstname }}
                             </option>
@@ -199,11 +229,15 @@ const subTotal = () => {
                         </div>
                         <div class="table__footer--discount">
                             <p>Discount</p>
-                            <input type="text" class="input" />
+                            <input
+                                type="text"
+                                class="input"
+                                v-model="form.remise"
+                            />
                         </div>
                         <div class="table__footer--total">
                             <p>Grand Total</p>
-                            <span>{{ subTotal() + " " }}fcfa</span>
+                            <span>{{ Total() + " " }}fcfa</span>
                         </div>
                     </div>
                 </div>
@@ -212,7 +246,7 @@ const subTotal = () => {
                     style="margin-top: 40px; margin-left: 20px"
                 >
                     <div>
-                        <a class="btn btn-secondary"> Save </a>
+                        <a class="btn btn-secondary" @click="saveItems()"> Save </a>
                     </div>
                 </div>
             </div>
