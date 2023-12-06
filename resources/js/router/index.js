@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Index from "../components/commandes/Index.vue";
 import NotFound from "../components/NotFound.vue";
 import New from "../components/commandes/New.vue"
+import Show from "../components/commandes/ShowInvoice.vue"
 
 const routes = [
     { path: "/", component: Index },
@@ -11,6 +12,8 @@ const routes = [
     { path: "/:pathMatch(.*)*", component: NotFound },
 
     { path: "/invoice/new", component: New},
+
+    { path: "/invoice/show/:id", component: Show, props:true}, 
 ];
 
 const router = createRouter({

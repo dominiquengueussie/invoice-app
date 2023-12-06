@@ -83,7 +83,7 @@ class InvoiceController extends Controller
         $invoicedata['total'] = $request->input('total');
         $invoicedata['terms_and_conditions'] = $request->input('customer_id');
 
-       $invoice = Invoice::create($invoicedata);
+        $invoice = Invoice::create($invoicedata);
 
         foreach (json_decode($invoiceitem) as $item) {
             $itemdata['invoice_id'] = $invoice->id;
@@ -93,5 +93,13 @@ class InvoiceController extends Controller
 
             InvoiceItem::create($itemdata);
         }
+    }
+
+    public function show_invoice($id)
+    {
+        $invoice = Invoice::with('customer')->find($id);
+        return response()->json([
+            'invoice' => $invoice
+        ], 200);
     }
 }
