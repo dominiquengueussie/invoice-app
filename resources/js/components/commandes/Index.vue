@@ -30,7 +30,7 @@ const newInvoice = async () => {
 }
 
 const showInvoice = (i) => {
-    router.push('/invoice/show' + i)
+    router.push('/invoice/show/' + i)
 }
 
 </script>
