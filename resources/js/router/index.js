@@ -2,11 +2,12 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Index from "../components/commandes/Index.vue";
 import NotFound from "../components/NotFound.vue";
-import New from "../components/commandes/New.vue"
-import Show from "../components/commandes/ShowInvoice.vue"
-import Edit from "../components/commandes/Edit.vue"
+import New from "../components/commandes/New.vue";
+import Show from "../components/commandes/ShowInvoice.vue";
+import Edit from '../components/commandes/Edit.vue';
 
 const routes = [
+    
     { path: "/", component: Index },
 
     /**Afficher la page notfound si aucun paramètre ne correspond à l'url souhaité  **/

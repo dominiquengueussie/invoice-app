@@ -1,6 +1,7 @@
 <script setup>
 import axios from "axios";
 import { onMounted, ref } from "vue";
+import router from "../../router";
 
 let form = ref({ id: "" });
 
@@ -13,7 +14,7 @@ const props = defineProps({
 
 onMounted(async () => {
     getInvoice();
-    console.log(`${props.id}`)
+    //console.log(`${props.id}`)
 });
 
 const getInvoice = async () => {
@@ -21,7 +22,7 @@ const getInvoice = async () => {
         let response = await axios.get(`/api/show_invoice/${props.id}`);
         if (response.data.invoice) {
             form.value = response.data.invoice
-            console.log( response.data.invoice)
+           // console.log( response.data.invoice)
         } else {
             console.log("Aucune facture trouvée");
         }
@@ -35,11 +36,10 @@ const print = () => {
     router.push('/').catch( () => {} )
 }
 
-const editInvoice = (i) => {
+const onEdit = (i) => {
     router.push('/invoice/edit/' + i)
 }
 </script>
-
 <template>
     <div class="container">
         <div class="invoices">
@@ -67,7 +67,7 @@ const editInvoice = (i) => {
                         </li>
                         <li>
                             <!-- Select Btn Option -->
-                            <button class="selectBtnFlat" @click="editInvoice(form.id)">
+                            <button class="selectBtnFlat" @click="onEdit(form.id)">
                                 <i class="fas fa-reply"></i>
                                 Edit
                             </button>
